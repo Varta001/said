@@ -71,19 +71,19 @@ else
     show "Skipping download as the latest version is already present."
 fi
 
-echo
+echo 
 show "How many PoP mining instances do you want to set up?"
 read -p "Enter number of instances: " num_instances
 
 for ((i=1; i<=num_instances; i++)); do
-    echo
+    echo 
     show "Select only one option for instance $i:"
     show "1. Use new wallet for PoP mining"
     show "2. Use existing wallet for PoP mining"
     
     read -p "Enter your choice (1/2): " choice
     
-    echo
+    echo 
     
     if [ "$choice" == "1" ]; then
         show "Generating a new wallet..."
@@ -96,11 +96,11 @@ for ((i=1; i<=num_instances; i++)); do
         
         cat ~/popm-address-$i.json
         
-        echo
+        echo 
         
         read -p "Have you saved the above details? (y/N): " saved
         
-        echo
+        echo 
         
         if [[ "$saved" =~ ^[Yy]$ ]]; then
             pubkey_hash=$(jq -r '.pubkey_hash' ~/popm-address-$i.json)
@@ -114,15 +114,6 @@ for ((i=1; i<=num_instances; i++)); do
                 priv_key=$(jq -r '.private_key' ~/popm-address-$i.json)
                 read -p "Enter static fee (numerical only, recommended: 100-200): " static_fee
                 
-                # Запрос данных прокси для текущей ноды.
-                read -p "Enter proxy in format IP:PORT:USERNAME:PASSWORD: " proxy_input
-                
-                # Сохранение прокси в файл.
-                echo "$proxy_input" > ~/proxy_settings_$i.txt
-                
-                export http_proxy="http://${proxy_input%%:*}:${proxy_input#*:}"
-                export https_proxy="http://${proxy_input%%:*}:${proxy_input#*:}"
-                
             fi
             
         fi
@@ -133,9 +124,19 @@ for ((i=1; i<=num_instances; i++)); do
         
         read -p "Enter static fee (numerical only, recommended: 100-200): " static_fee;
         
-        echo
+        echo 
         
     fi
+    
+    # Запрос данных прокси для текущей ноды.
+    read -p "Enter proxy in format IP:PORT:USERNAME:PASSWORD: " proxy_input
+    
+    # Сохранение прокси в файл.
+    echo "$proxy_input" > ~/proxy_settings_$i.txt
+    
+    export http_proxy="http://${proxy_input%%:*}:${proxy_input#*:}"
+    export https_proxy="http://${proxy_input%%:*}:${proxy_input#*:}"
+
     
     if systemctl is-active --quiet hemi_$i.service; then
         show "${i}. hemi.service is currently running. Stopping and disabling it..."
